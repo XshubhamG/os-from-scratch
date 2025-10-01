@@ -1,7 +1,9 @@
 #include "common.h"
 
+// For variable argument functions like printf.
 void putchar(char ch);
 
+// Simple printf implementation supporting %s, %d, %x, and %%.
 void printf(const char *fmt, ...) {
   va_list vargs;
   va_start(vargs, fmt);
@@ -64,6 +66,7 @@ end:
   va_end(vargs);
 }
 
+// Simple memory functions.
 void *memcpy(void *dst, const void *src, size_t n) {
   uint8_t *d = (uint8_t *)dst;
   const uint8_t *s = (const uint8_t *)src;
@@ -72,6 +75,7 @@ void *memcpy(void *dst, const void *src, size_t n) {
   return dst;
 }
 
+// Simple memory functions.
 void *memset(void *buf, char c, size_t n) {
   uint8_t *p = (uint8_t *)buf;
   while (n--)
@@ -81,6 +85,7 @@ void *memset(void *buf, char c, size_t n) {
 
 // WARN:
 // https://operating-system-in-1000-lines.vercel.app/en/06-libc#string-operations
+// The strcpy implementation below does not handle overlapping memory regions.
 char *strcpy(char *dst, const char *src) {
   char *d = dst;
   while (*src)
@@ -89,6 +94,7 @@ char *strcpy(char *dst, const char *src) {
   return dst;
 }
 
+// Simple string comparison function.
 int strcmp(const char *s1, const char *s2) {
   while (*s1 && *s2) {
     if (*s1 != *s2)

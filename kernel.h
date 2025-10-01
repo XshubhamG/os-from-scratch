@@ -1,5 +1,6 @@
 #include "common.h"
 
+// Trap frame structure to save CPU registers during context switches
 struct trap_frame {
   uint32_t ra;
   uint32_t gp;
@@ -34,6 +35,7 @@ struct trap_frame {
   uint32_t sp;
 } __attribute__((packed));
 
+// Macros for reading control and status registers (CSRs)
 #define READ_CSR(reg)                                                          \
   ({                                                                           \
     unsigned long __tmp;                                                       \
@@ -41,19 +43,23 @@ struct trap_frame {
     __tmp;                                                                     \
   })
 
+// Macros for writing control and status registers (CSRs)
 #define WRITE_CSR(reg, value)                                                  \
   do {                                                                         \
     uint32_t __tmp = (value);                                                  \
     __asm__ __volatile__("csrw " #reg ", %0" ::"r"(__tmp));                    \
   } while (0)
 
+// Macros for swapping values in control and status registers (CSRs)
 #pragma once
 
+// Structure returned by system calls
 struct sbiret {
   long error;
   long value;
 };
 
+// Panic macro for error handling
 #define PANIC(fmt, ...)                                                        \
   do {                                                                         \
     printf("PANIC: %s:%d: " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);      \
@@ -66,9 +72,19 @@ struct sbiret {
 #define PROC_UNUSED 0   // Unused process control structure
 #define PROC_RUNNABLE 1 // Runnable process
 
+// Process control block structure
 struct process {
-  int pid;             // Process ID
-  int state;           // Process state: PROC_UNUSED or PROC_RUNNABLE
-  vaddr_t sp;          // Stack pointer
-  uint8_t stack[8192]; // Kernel stack
+  int pid;
+  int state;
+  vaddr_t sp;
+  uint32_t *page_table;
+  uint8_t stack[8192];
 };
+
+// Macros for page table entries and address translation
+#define SATP_SV32 (1u << 31)
+#define PAGE_V (1 << 0) // "Valid" bit (entry is enabled)
+#define PAGE_R (1 << 1) // Readable
+#define PAGE_W (1 << 2) // Writable
+#define PAGE_X (1 << 3) // Executable
+#define PAGE_U (1 << 4) // User (accessible in user mode)
