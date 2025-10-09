@@ -1,5 +1,7 @@
 #pragma once
 #include "common.h"
 
-__attribute__((noreturn)) void exit(void);
 void putchar(char ch);
+int getchar(void);
+__attribute__((noreturn)) void exit(void);
+__attribute__((section(".text.start"))) __attribute__((naked)) void start(void);
